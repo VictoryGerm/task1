@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Виртуальные окружения
+venv/
+env/
+.venv/
+.idea/
+
+# Тесты
+.pytest_cache/
+.coverage
+
+# IDE
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
