@@ -59,7 +59,7 @@ def main():
         print(f"{n:>8} | {t_mem:>15} | {t_str:>15}")
 
         # Проверка корректности — оба способа должны дать одинаковую длину
-        assert r_mem == 2 * n, f"in-memory вернул {r_mem}, ожидалось {2*n}"
+        assert len(r_mem) == 2 * n, f"in-memory вернул {len(r_mem)}, ожидалось {2 * n}"
         assert r_str == 2 * n, f"stream вернул {r_str}, ожидалось {2*n}"
 
 
