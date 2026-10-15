@@ -1,5 +1,6 @@
 import sys
 import os
+import matplotlib.pyplot as plt
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
@@ -88,11 +89,42 @@ def merge_stream_counted(a, b, mc):
             mc.alloc()
 
 
+
+
+def plot_memory(sizes_bytes, mem_peaks, stream_peaks, filename="bench_memory.png"):
+    """Строит график пиковой памяти in-memory vs stream от объёма данных."""
+    plt.figure(figsize=(10, 6))
+
+    plt.plot(sizes_bytes, mem_peaks, marker="o", label="in-memory")
+    plt.plot(sizes_bytes, stream_peaks, marker="s", label="stream")
+
+    plt.xscale("log", base=2)      # по X — данные растут ×2
+    plt.yscale("log", base=10)     # по Y — stream=2 и in-memory=2n, разница огромная
+
+    plt.xlabel("Объём данных (байты)")
+    plt.ylabel("Пиковая память (элементов)")
+    plt.title("Вариант 40: пиковая память при слиянии")
+    plt.legend()
+    plt.grid(True, which="both", alpha=0.3)
+
+    plt.savefig(filename, dpi=150, bbox_inches="tight")
+    plt.show()
+    print(f"График сохранён в {filename}")
+
+
+
+
 def main():
     sizes = [1000, 2000, 4000, 8000, 16000, 32000, 64000]
 
     print(f"{'n':>8} | {'in-memory peak':>15} | {'stream peak':>12}")
     print("-" * 42)
+
+
+    sizes_bytes = []
+    mem_peaks = []
+    stream_peaks = []
+
 
     for n in sizes:
         a = make_sorted_source(n, seed=1)
@@ -114,6 +146,11 @@ def main():
         assert count == 2 * n
         assert mc_mem.peak == 2 * n
         assert mc_str.peak == 2
+
+        sizes_bytes.append(n * 8)
+        mem_peaks.append(mc_mem.peak)
+        stream_peaks.append(mc_str.peak)
+    plot_memory(sizes_bytes, mem_peaks, stream_peaks)
 
 if __name__ == "__main__":
     main()
