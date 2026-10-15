@@ -120,17 +120,14 @@ def main():
     print(f"{'n':>8} | {'in-memory peak':>15} | {'stream peak':>12}")
     print("-" * 42)
 
-
     sizes_bytes = []
     mem_peaks = []
     stream_peaks = []
-
 
     for n in sizes:
         a = make_sorted_source(n, seed=1)
         b = make_sorted_source(n, seed=2)
 
-        # Замер in-memory
         mc_mem = MemoryCounter()
         result = merge_in_memory_counted(a, b, mc_mem)
 
@@ -141,7 +138,6 @@ def main():
 
         print(f"{n:>8} | {mc_mem.peak:>15} | {mc_str.peak:>12}")
 
-        # Проверки
         assert len(result) == 2 * n
         assert count == 2 * n
         assert mc_mem.peak == 2 * n
@@ -150,27 +146,29 @@ def main():
         sizes_bytes.append(n * 8)
         mem_peaks.append(mc_mem.peak)
         stream_peaks.append(mc_str.peak)
+
     plot_memory(sizes_bytes, mem_peaks, stream_peaks)
+    estimate_memory_limit(ram_gb=8)      # ← вызвали, но она объявлена СНАРУЖИ
 
 
-
-def estimate_memory_limit(ram_gb=8):
+def estimate_memory_limit(ram_gb=16):      # ← ВНЕ main, на верхнем уровне
     """Оценка: при каком n in-memory перестанет влезать в RAM."""
     bytes_per_element = 36
     elements_alive = 4
     usable_gb = ram_gb * 0.75
 
-    n_max = usable_gb * 1024**3 / (elements_alive * bytes_per_element)
+    n_max = usable_gb * 1024 ** 3 / (elements_alive * bytes_per_element)
 
     print(f"\n=== Оценка предела in-memory ===")
     print(f"RAM: {ram_gb} ГБ, доступно ~{usable_gb} ГБ")
     print(f"Предел: n ≈ {int(n_max):,}\n")
 
-    for n in [10**6, 10**7, 10**8]:
-        gb = 4 * n * bytes_per_element / 1024**3
+    for n in [10 ** 6, 10 ** 7, 10 ** 8]:
+        gb = 4 * n * bytes_per_element / 1024 ** 3
         status = "OK" if gb < usable_gb else "не влезет"
         print(f"  n = {n:>12,} → {gb:>6.2f} ГБ — {status}")
-        
+
+
 
 if __name__ == "__main__":
     main()
