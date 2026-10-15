@@ -152,5 +152,25 @@ def main():
         stream_peaks.append(mc_str.peak)
     plot_memory(sizes_bytes, mem_peaks, stream_peaks)
 
+
+
+def estimate_memory_limit(ram_gb=8):
+    """Оценка: при каком n in-memory перестанет влезать в RAM."""
+    bytes_per_element = 36
+    elements_alive = 4
+    usable_gb = ram_gb * 0.75
+
+    n_max = usable_gb * 1024**3 / (elements_alive * bytes_per_element)
+
+    print(f"\n=== Оценка предела in-memory ===")
+    print(f"RAM: {ram_gb} ГБ, доступно ~{usable_gb} ГБ")
+    print(f"Предел: n ≈ {int(n_max):,}\n")
+
+    for n in [10**6, 10**7, 10**8]:
+        gb = 4 * n * bytes_per_element / 1024**3
+        status = "OK" if gb < usable_gb else "не влезет"
+        print(f"  n = {n:>12,} → {gb:>6.2f} ГБ — {status}")
+        
+
 if __name__ == "__main__":
     main()
