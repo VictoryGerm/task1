@@ -151,7 +151,7 @@ def main():
     estimate_memory_limit(ram_gb=8)      # ← вызвали, но она объявлена СНАРУЖИ
 
 
-def estimate_memory_limit(ram_gb=16):      # ← ВНЕ main, на верхнем уровне
+def estimate_memory_limit(ram_gb=8):      # ← ВНЕ main, на верхнем уровне
     """Оценка: при каком n in-memory перестанет влезать в RAM."""
     bytes_per_element = 36
     elements_alive = 4
